@@ -5,7 +5,7 @@ with a few additional edits borrowed from Filament Group's. (https://www.filamen
 */
 
 (function() {
-  const version = 'v1';
+  const version = 'v2';
   const cacheName = ':countdown:';
 
   const staticCacheName = version + cacheName + 'static';
