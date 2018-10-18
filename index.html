@@ -47,6 +47,10 @@
 			        box-sizing: border-box;
 		}
 
+		:root {
+			--time: 30;
+		}
+
 		.face,
 		.face:before,
 		.face:after,
@@ -61,8 +65,8 @@
 		}
 
 		.face {
-			width: 90vmin;
-			height: 90vmin;
+			width: 80vmin;
+			height: 80vmin;
 			border-radius: 50%;
 			-webkit-box-shadow: 0 0 0 2vmin #718093, 0 0 10vmin rgba(0, 0, 0, 0.8);
 			        box-shadow: 0 0 0 2vmin #718093, 0 0 10vmin rgba(0, 0, 0, 0.8);
@@ -145,13 +149,13 @@
 		}
 
 		.animate .hand {
-			-webkit-animation: 30s countdown linear forwards;
-			        animation: 30s countdown linear forwards;
+			-webkit-animation: calc(var(--time) * 1s) countdown linear forwards;
+			        animation: calc(var(--time) * 1s) countdown linear forwards;
 		}
 
 		.animate .cover:before {
-			-webkit-animation: 30s countdownCover steps(30) forwards;
-			        animation: 30s countdownCover steps(30) forwards;
+			-webkit-animation: calc(var(--time) * 1s) countdownCover steps(30) forwards;
+			        animation: calc(var(--time) * 1s) countdownCover steps(30) forwards;
 		}
 
 		.cover {
@@ -235,6 +239,13 @@
 
 		audio {
 			opacity: 0;
+		}
+
+		.time {
+			position: absolute;
+			bottom: 2vmin;
+			left: 50%;
+			transform: translateX(-50%);
 		}
 
 		@-webkit-keyframes countdown {
@@ -324,15 +335,46 @@
 		<button class="trigger" type="button">Tap to start</button>
 		<audio src="countdown.mp3" preload="">
 	</time>
+	<select name="time" class="time">
+		<option value="5">5 seconds</option>
+		<option value="15">15 seconds</option>
+		<option value="30" selected>30 seconds</option>
+		<option value="60">1 minute</option>
+		<option value="120">2 minutes</option>
+		<option value="300">5 minutes</option>
+	</select>
+
 	<script>
 		(function() {
+			var time = 30;
 			var trigger = document.querySelector('.trigger');
 			var face = document.querySelector('.face');
 			var audio = document.querySelector('audio');
+			var timePicker = document.querySelector('.time');
+			updateTime();
+
 			trigger.addEventListener('click', function () {
 				face.classList.toggle('animate')
-				audio.currentTime = 0;
+				audio.currentTime = 0.5;
 				audio[audio.paused ? 'play' : 'pause']();
+			});
+
+			timePicker.addEventListener('change', function (event) {
+				time = event.target.value;
+				updateTime();
+			});
+
+			function updateTime() {
+				document.documentElement.style.setProperty('--time', Number(time));
+				audio.playbackRate = 30 / Number(time);
+			}
+
+			audio.addEventListener('play', function () {
+				timePicker.disabled = true;
+			});
+
+			audio.addEventListener('pause', function () {
+				timePicker.disabled = false;
 			});
 
 			audio.addEventListener('ended', function () {
